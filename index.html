@@ -5,53 +5,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Holt – Kosmetikshop</title>
+  <title>Holt Shop</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=sb"></script>
 </head>
 <body>
 
-  <!-- 🔹 Header -->
+  <!-- Header -->
   <header>
     <h1>Holt</h1>
     <button id="toggleSidebar">☰</button>
   </header>
 
-  <!-- 🔹 Sidebar -->
-  <aside id="sidebar" class="hidden">
-    <input type="text" id="searchInput" placeholder="Suche..." />
-    <button onclick="toggleLogin()">Login</button>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <input type="text" id="searchInput" placeholder="Suchen..." />
+    <nav>
+      <ul>
+        <li><a href="#" onclick="showSection('home')">Startseite</a></li>
+        <li><a href="#" onclick="showSection('searchResults')">Suche</a></li>
+        <li><a href="#" onclick="showSection('favorites')">Warenkorb</a></li>
+        <li><a href="#" onclick="showSection('account')">Account</a></li>
+        <li><a href="#" onclick="showSection('about')">Über uns</a></li>
+        <li><a href="#" onclick="toggleLogin()">Login / Logout</a></li>
+      </ul>
+    </nav>
   </aside>
 
-  <!-- 🔹 Hauptinhalt -->
+  <!-- Hauptinhalt -->
   <main>
-    <!-- Zuletzt gesucht -->
-    <section>
+    <section id="home">
       <h2>Zuletzt gesucht</h2>
-      <div class="product-list" id="productsRecently"></div>
-    </section>
+      <div id="recentlySearched" class="product-list"></div>
 
-    <!-- Lieblingsartikel -->
-    <section>
       <h2>Lieblingsartikel</h2>
-      <div class="product-list" id="productsFavorites"></div>
+      <div id="favorites" class="product-list"></div>
+
+      <h2>Make-Up</h2>
+      <div id="makeupCategory" class="product-list"></div>
     </section>
 
-    <!-- Kategorie: Make-Up -->
-    <section>
-      <h2>Make-Up</h2>
-      <div class="product-list" id="productsMakeup"></div>
+    <section id="searchResults" style="display: none;">
+      <h2>Suchergebnisse</h2>
+      <div id="searchResultContainer" class="product-list"></div>
+    </section>
+
+    <section id="account" style="display: none;">
+      <h2>Account-Bereich</h2>
+      <p>Hier kannst du dein Profil verwalten (in Entwicklung).</p>
+    </section>
+
+    <section id="about" style="display: none;">
+      <h2>Über uns</h2>
+      <p>Holt ist dein zuverlässiger Online-Shop für Kosmetikartikel.</p>
+    </section>
+
+    <!-- Admin Upload-Bereich -->
+    <section id="uploadSection" style="display: none;">
+      <h2>Produkt hochladen (Admin)</h2>
+      <input id="productTitle" placeholder="Titel" />
+      <input id="productBrand" placeholder="Marke" />
+      <textarea id="productDescription" placeholder="Beschreibung"></textarea>
+      <input id="productCategory" placeholder="Kategorie" />
+      <input id="productPrice" placeholder="Preis" />
+      <input id="productImages" placeholder="Bild-URL (optional)" />
+      <input type="file" id="productImageFile" />
+      <button onclick="uploadProduct()">Produkt hochladen</button>
     </section>
   </main>
 
-  <!-- 🔹 Produktdetail-Modal -->
+  <!-- Detailansicht -->
   <div id="productDetail" class="modal">
     <div class="detail-content">
       <span class="close" onclick="closeDetail()">×</span>
       <div id="detailImages"></div>
-      <h3 id="detailTitle"></h3>
+      <h2 id="detailTitle"></h2>
       <p id="detailBrand"></p>
       <p id="detailDescription"></p>
       <p id="detailCategory"></p>
@@ -60,33 +88,18 @@
     </div>
   </div>
 
-  <!-- 🔹 Login-Modal -->
+  <!-- Login Modal -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="toggleLogin()">×</span>
-      <h2>Login</h2>
+      <h2>Admin Login</h2>
       <input type="text" id="adminUser" placeholder="Benutzername" />
       <input type="password" id="adminPass" placeholder="Passwort" />
       <button onclick="loginAdmin()">Einloggen</button>
     </div>
   </div>
 
-  <!-- 🔹 Admin-Uploadbereich -->
-  <div id="uploadSection" style="display: none;">
-    <h2>Produkt hochladen (nur Admin)</h2>
-    <input type="text" id="productTitle" placeholder="Titel" />
-    <input type="text" id="productBrand" placeholder="Marke" />
-    <textarea id="productDescription" placeholder="Beschreibung"></textarea>
-    <input type="text" id="productCategory" placeholder="Kategorie" />
-    <input type="number" id="productPrice" placeholder="Preis (€)" />
-    
-    <input type="text" id="productImages" placeholder="Bild-URLs, durch Komma getrennt" />
-    <input type="file" id="productFileImages" multiple />
-    
-    <button onclick="uploadProduct()">Produkt hochladen</button>
-  </div>
-
-  <!-- 🔹 Hauptscript -->
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>

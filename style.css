@@ -1,14 +1,16 @@
-/* === Grundlayout und Farben === */
+/* styles.css */
+
+/* Grundlayout */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #2e2e2e;
+  font-family: 'Playfair Display', serif;
+  background-color: #383838;
   color: white;
 }
 
-/* === Header === */
+/* Header mit Verlauf */
 header {
-  background-color: #6ca0dc;
+  background: linear-gradient(to right, #ffffff, #c9e0f7);
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -25,20 +27,21 @@ header {
 header h1 {
   margin: 0;
   font-size: 2rem;
+  color: #1a1a1a;
 }
 
 #toggleSidebar {
   font-size: 1.5rem;
   background: none;
   border: none;
-  color: white;
+  color: #1a1a1a;
   cursor: pointer;
 }
 
-/* === Sidebar === */
+/* Sidebar */
 aside#sidebar {
   width: 250px;
-  background-color: #3a3a3a;
+  background-color: #2d2d2d;
   color: white;
   padding: 1rem;
   position: fixed;
@@ -47,6 +50,7 @@ aside#sidebar {
   right: 0;
   overflow-y: auto;
   transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 }
 
 aside#sidebar.hidden {
@@ -57,12 +61,23 @@ aside input[type="text"] {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 1rem;
-  background-color: #2e2e2e;
+  background-color: #1e1e1e;
   border: 1px solid #6ca0dc;
   color: white;
 }
 
-/* === Main Content === */
+aside a {
+  display: block;
+  margin: 0.5rem 0;
+  color: #6ca0dc;
+  text-decoration: none;
+}
+
+aside a:hover {
+  text-decoration: underline;
+}
+
+/* Hauptinhalt */
 main {
   margin-top: 80px;
   margin-right: 270px;
@@ -76,7 +91,7 @@ h2 {
   color: white;
 }
 
-/* === Produktlisten und Karten === */
+/* Produktkarten */
 .product-list {
   display: flex;
   flex-wrap: wrap;
@@ -113,7 +128,7 @@ h2 {
   color: #6ca0dc;
 }
 
-/* === Modals (Detailansicht & Login) === */
+/* Modal Fenster */
 .modal {
   display: none;
   position: fixed;
@@ -176,7 +191,7 @@ h2 {
   border: 1px solid #6ca0dc;
 }
 
-/* === Admin-Uploadbereich === */
+/* Uploadbereich */
 #uploadSection {
   background-color: #3a3a3a;
   padding: 2rem;
