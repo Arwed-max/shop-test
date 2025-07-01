@@ -1,224 +1,300 @@
-/* styles.css */
-
-/* Grundlayout */
+/* Grundstil und Schriftarten */
 body {
-  margin: 0;
-  font-family: 'Playfair Display', serif;
-  background-color: #383838;
-  color: white;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
 }
 
-/* Header mit Verlauf */
+h1, h2, .section-title {
+    font-family: 'Playfair Display', serif;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+h2, .section-title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+/* Kopfzeile */
 header {
-  background: linear-gradient(to right, #ffffff, #c9e0f7);
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+    background: #a3c4f3; /* Babyblau */
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+header button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 2rem;
-  color: #1a1a1a;
-}
-
-#toggleSidebar {
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-  color: #1a1a1a;
-  cursor: pointer;
+    flex-grow: 1;
+    text-align: center;
 }
 
 /* Sidebar */
-aside#sidebar {
-  width: 250px;
-  background-color: #2d2d2d;
-  color: white;
-  padding: 1rem;
-  position: fixed;
-  top: 64px;
-  bottom: 0;
-  right: 0;
-  overflow-y: auto;
-  transition: transform 0.3s ease-in-out;
-  z-index: 1000;
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    padding: 20px;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
 }
 
-aside#sidebar.hidden {
-  transform: translateX(100%);
+#sidebar.sidebar-open {
+    transform: translateX(0);
 }
 
-aside input[type="text"] {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  background-color: #1e1e1e;
-  border: 1px solid #6ca0dc;
-  color: white;
+#sidebarClose {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    float: right;
+    cursor: pointer;
+    color: #333;
 }
 
-aside a {
-  display: block;
-  margin: 0.5rem 0;
-  color: #6ca0dc;
-  text-decoration: none;
+.sidebar-content {
+    margin-top: 40px;
 }
 
-aside a:hover {
-  text-decoration: underline;
+#searchInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-/* Hauptinhalt */
+#searchBtn {
+    width: 100%;
+    padding: 8px;
+    background-color: #a3c4f3;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#cartList {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#cartList li {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+#cartList li:last-child {
+    border-bottom: none;
+}
+
+#cartEmpty {
+    font-style: italic;
+    color: #777;
+}
+
+#checkoutBtn {
+    width: 100%;
+    padding: 8px;
+    background-color: #0052cc;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* Produkte */
 main {
-  margin-top: 80px;
-  margin-right: 270px;
-  padding: 1rem;
+    padding: 20px;
 }
 
-h2 {
-  border-left: 4px solid #6ca0dc;
-  padding-left: 0.5rem;
-  margin-top: 2rem;
-  color: white;
-}
-
-/* Produktkarten */
-.product-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+    gap: 20px;
 }
 
 .product-card {
-  background-color: #444;
-  border: 1px solid #6ca0dc;
-  padding: 1rem;
-  width: 200px;
-  cursor: pointer;
-  transition: transform 0.2s;
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
 }
 
 .product-card:hover {
-  transform: scale(1.03);
+    transform: translateY(-5px);
 }
 
 .product-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+    max-width: 100%;
+    border-radius: 6px;
+    object-fit: contain;
+    height: 150px;
+    margin-bottom: 10px;
 }
 
-.product-card h3 {
-  margin: 0.5rem 0 0.2rem;
-  font-size: 1.1rem;
+.product-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
 }
 
-.product-card p {
-  margin: 0;
-  font-weight: bold;
-  color: #6ca0dc;
+.product-price {
+    color: #0077cc;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
-/* Modal Fenster */
+.product-category {
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Modal (Detail & Login) */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(46, 46, 46, 0.9);
-  backdrop-filter: blur(4px);
-  justify-content: center;
-  align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 2000;
 }
 
-.modal-content, .detail-content {
-  background-color: #3a3a3a;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  color: white;
-  position: relative;
+.modal.hidden {
+    display: none;
 }
 
-.modal-content input,
-.modal-content textarea {
-  width: 100%;
-  padding: 0.5rem;
-  margin: 0.5rem 0;
-  background-color: #2e2e2e;
-  border: 1px solid #6ca0dc;
-  color: white;
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal-content button {
-  background-color: #6ca0dc;
-  border: none;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  margin-top: 1rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
-.modal-content button:hover {
-  background-color: #5b90c8;
+#modalImages img {
+    max-width: 100%;
+    margin-bottom: 10px;
+    border-radius: 6px;
 }
 
-.close {
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  font-size: 1.5rem;
-  cursor: pointer;
+/* Login Modal */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
-.detail-content img {
-  width: 100px;
-  margin: 0.5rem;
-  border: 1px solid #6ca0dc;
+.tabs button {
+    flex-grow: 1;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #e1e6f9;
+    border: none;
+    font-weight: bold;
+    border-radius: 6px 6px 0 0;
+    color: #444;
 }
 
-/* Uploadbereich */
-#uploadSection {
-  background-color: #3a3a3a;
-  padding: 2rem;
-  margin: 2rem;
-  border: 2px solid #6ca0dc;
-  border-radius: 8px;
+.tabs button.active-tab {
+    background-color: #a3c4f3;
+    color: white;
 }
 
-#uploadSection input,
-#uploadSection textarea {
-  width: 100%;
-  padding: 0.6rem;
-  margin: 0.5rem 0;
-  background-color: #2e2e2e;
-  border: 1px solid #6ca0dc;
-  color: white;
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-#uploadSection button {
-  background-color: #6ca0dc;
-  border: none;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  margin-top: 1rem;
+form label {
+    font-weight: bold;
 }
 
-#uploadSection button:hover {
-  background-color: #5b90c8;
+form input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+form button {
+    background-color: #a3c4f3;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Nachricht Login */
+#loginMessage {
+    margin-top: 10px;
+    font-weight: bold;
+    color: red;
 }

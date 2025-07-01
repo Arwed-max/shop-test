@@ -1,107 +1,84 @@
 <!DOCTYPE html>
-    <!-- CSS Datei verlinken -->
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Holt - Moderner Online-Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Holt Shop</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.paypal.com/sdk/js?client-id=sb"></script>
-</head>
-<body>
+    <header>
+        <div class="header-left">
+            <button id="sidebarToggle" aria-label="Sidebar öffnen">&#9776;</button>
+            <button id="loginToggle" aria-label="Login Bereich öffnen">Anmelden</button>
+        </div>
+        <h1>Holt</h1>
+    </header>
 
-  <!-- Header -->
-  <header>
-    <h1>Holt</h1>
-    <button id="toggleSidebar">☰</button>
-  </header>
+    <aside id="sidebar" class="sidebar-closed">
+        <button id="sidebarClose" aria-label="Sidebar schließen">&times;</button>
+        <div class="sidebar-content">
+            <input type="text" id="searchInput" placeholder="Suche Produkte..." />
+            <button id="searchBtn">Suchen</button>
+            <h2>Warenkorb</h2>
+            <ul id="cartList"></ul>
+            <p id="cartEmpty">Dein Warenkorb ist leer.</p>
+            <button id="checkoutBtn">Zur Kasse</button>
+        </div>
+    </aside>
 
-  <!-- Sidebar -->
-  <aside id="sidebar">
-    <input type="text" id="searchInput" placeholder="Suchen..." />
-    <nav>
-      <ul>
-        <li><a href="#" onclick="showSection('home')">Startseite</a></li>
-        <li><a href="#" onclick="showSection('searchResults')">Suche</a></li>
-        <li><a href="#" onclick="showSection('favorites')">Warenkorb</a></li>
-        <li><a href="#" onclick="showSection('account')">Account</a></li>
-        <li><a href="#" onclick="showSection('about')">Über uns</a></li>
-        <li><a href="#" onclick="toggleLogin()">Login / Logout</a></li>
-      </ul>
-    </nav>
-  </aside>
+    <main>
+        <section id="productsSection">
+            <h2 class="section-title">Beispiel Produkte</h2>
+            <div id="productsGrid" class="products-grid"></div>
+        </section>
+    </main>
 
-  <!-- Hauptinhalt -->
-  <main>
-    <section id="home">
-      <h2>Zuletzt gesucht</h2>
-      <div id="recentlySearched" class="product-list"></div>
-
-      <h2>Lieblingsartikel</h2>
-      <div id="favorites" class="product-list"></div>
-
-      <h2>Make-Up</h2>
-      <div id="makeupCategory" class="product-list"></div>
-    </section>
-
-    <section id="searchResults" style="display: none;">
-      <h2>Suchergebnisse</h2>
-      <div id="searchResultContainer" class="product-list"></div>
-    </section>
-
-    <section id="account" style="display: none;">
-      <h2>Account-Bereich</h2>
-      <p>Hier kannst du dein Profil verwalten (in Entwicklung).</p>
-    </section>
-
-    <section id="about" style="display: none;">
-      <h2>Über uns</h2>
-      <p>Holt ist dein zuverlässiger Online-Shop für Kosmetikartikel.</p>
-    </section>
-
-    <!-- Admin Upload-Bereich -->
-    <section id="uploadSection" style="display: none;">
-      <h2>Produkt hochladen (Admin)</h2>
-      <input id="productTitle" placeholder="Titel" />
-      <input id="productBrand" placeholder="Marke" />
-      <textarea id="productDescription" placeholder="Beschreibung"></textarea>
-      <input id="productCategory" placeholder="Kategorie" />
-      <input id="productPrice" placeholder="Preis" />
-      <input id="productImages" placeholder="Bild-URL (optional)" />
-      <input type="file" id="productImageFile" />
-      <button onclick="uploadProduct()">Produkt hochladen</button>
-    </section>
-  </main>
-
-  <!-- Detailansicht -->
-  <div id="productDetail" class="modal">
-    <div class="detail-content">
-      <span class="close" onclick="closeDetail()">×</span>
-      <div id="detailImages"></div>
-      <h2 id="detailTitle"></h2>
-      <p id="detailBrand"></p>
-      <p id="detailDescription"></p>
-      <p id="detailCategory"></p>
-      <p id="detailPrice"></p>
-      <div id="paypal-button-container"></div>
+    <!-- Produkt Detail Modal -->
+    <div id="productDetailModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <button id="modalCloseBtn" aria-label="Schließen">&times;</button>
+            <h2 id="modalTitle"></h2>
+            <div id="modalImages"></div>
+            <p id="modalDescription"></p>
+            <p><strong>Preis:</strong> <span id="modalPrice"></span> €</p>
+            <p><strong>Kategorie:</strong> <span id="modalCategory"></span></p>
+            <p><strong>Marke:</strong> <span id="modalBrand"></span></p>
+            <p><strong>Anbieter:</strong> Holt Online Shop</p>
+            <button id="addToCartBtn">In Warenkorb</button>
+        </div>
     </div>
-  </div>
 
-  <!-- Login Modal -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="toggleLogin()">×</span>
-      <h2>Admin Login</h2>
-      <input type="text" id="adminUser" placeholder="Benutzername" />
-      <input type="password" id="adminPass" placeholder="Passwort" />
-      <button onclick="loginAdmin()">Einloggen</button>
+    <!-- Login / Registrierung Modal -->
+    <div id="loginModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+        <div class="modal-content">
+            <button id="loginCloseBtn" aria-label="Schließen">&times;</button>
+            <h2 id="loginTitle">Anmelden / Registrieren</h2>
+            <div class="tabs">
+                <button id="loginTab" class="active-tab">Anmelden</button>
+                <button id="registerTab">Registrieren</button>
+            </div>
+            <form id="loginForm" class="active-form">
+                <label for="loginEmail">E-Mail:</label>
+                <input type="email" id="loginEmail" required />
+                <label for="loginPassword">Passwort:</label>
+                <input type="password" id="loginPassword" required />
+                <button type="submit">Anmelden</button>
+            </form>
+            <form id="registerForm" class="hidden">
+                <label for="registerEmail">E-Mail:</label>
+                <input type="email" id="registerEmail" required />
+                <label for="registerPassword">Passwort:</label>
+                <input type="password" id="registerPassword" required />
+                <label for="registerPasswordConfirm">Passwort bestätigen:</label>
+                <input type="password" id="registerPasswordConfirm" required />
+                <button type="submit">Registrieren</button>
+            </form>
+            <p id="loginMessage"></p>
+        </div>
     </div>
-  </div>
 
-  <!-- Script -->
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

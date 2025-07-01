@@ -1,198 +1,271 @@
-// script.js
-
-// Produktdaten laden oder initialisieren
-let products = JSON.parse(localStorage.getItem("products")) || [
-  {
-    title: "Lippenstift Rosa",
-    brand: "Beautify",
-    description: "Ein langanhaltender, feuchtigkeitsspendender Lippenstift in zartem Rosa.",
-    category: "Make-Up",
-    price: "12.99",
-    images: ["https://via.placeholder.com/150", "https://via.placeholder.com/150"]
-  },
-  {
-    title: "Tagescreme Natur",
-    brand: "PureSkin",
-    description: "Pflegende Tagescreme mit natürlichen Inhaltsstoffen.",
-    category: "Pflege",
-    price: "14.99",
-    images: ["https://via.placeholder.com/150"]
-  }
+// Beispielprodukte (kreativ erweitert)
+const products = [
+    {
+        id: 1,
+        title: "Feuchtigkeitsspendende Gesichtscreme",
+        price: 19.99,
+        category: "Gesichtspflege",
+        brand: "Holt Beauty",
+        description: "Leichte Creme für intensive Feuchtigkeit und geschmeidige Haut.",
+        images: ["https://via.placeholder.com/300x200?text=Gesichtscreme"],
+    },
+    {
+        id: 2,
+        title: "Natürlicher Lippenbalsam",
+        price: 7.99,
+        category: "Lippenpflege",
+        brand: "Holt Nature",
+        description: "Pflegt und schützt die Lippen mit natürlichen Inhaltsstoffen.",
+        images: ["https://via.placeholder.com/300x200?text=Lippenbalsam"],
+    },
+    {
+        id: 3,
+        title: "Revitalisierendes Shampoo",
+        price: 12.99,
+        category: "Haarpflege",
+        brand: "Holt Hair",
+        description: "Sanftes Shampoo für glänzendes und gesundes Haar.",
+        images: ["https://via.placeholder.com/300x200?text=Shampoo"],
+    },
 ];
 
-let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
-// Produkte speichern
-function saveProducts() {
-  localStorage.setItem("products", JSON.stringify(products));
-}
-function saveFavorites() {
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-}
-
-// Sidebar umschalten
-document.getElementById("toggleSidebar").onclick = () => {
-  document.getElementById("sidebar").classList.toggle("hidden");
+// Admin Login-Daten
+const adminData = {
+    email: "Admin_XXX@example.com",
+    password: "ichbinderAdmin",
 };
 
-// Produktanzeige
-function renderProducts(sectionId, filterFn) {
-  const section = document.getElementById(sectionId);
-  if (!section) return;
-  section.innerHTML = "";
-  products.filter(filterFn).forEach((p, i) => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-    card.innerHTML = `
-      <img src="${p.images[0]}" alt="${p.title}">
-      <h3>${p.title}</h3>
-      <p>${p.price} €</p>
-      <button onclick="showDetail(${i})">Ansehen</button>
-      <button onclick="toggleFavorite(${i})">${isFavorite(i) ? "★ Entfernen" : "☆ Merken"}</button>
-    `;
-    section.appendChild(card);
-  });
-}
+let cart = JSON.parse(localStorage.getItem("holtCart")) || [];
+let loggedInUser = null;
 
-// Favoriten anzeigen
-function isFavorite(index) {
-  return favorites.includes(index);
-}
-function toggleFavorite(index) {
-  if (favorites.includes(index)) {
-    favorites = favorites.filter(i => i !== index);
-  } else {
-    favorites.push(index);
-  }
-  saveFavorites();
-  renderAll();
-}
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebarClose = document.getElementById("sidebarClose");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+const productsGrid = document.getElementById("productsGrid");
+const cartList = document.getElementById("cartList");
+const cartEmpty = document.getElementById("cartEmpty");
+const checkoutBtn = document.getElementById("checkoutBtn");
 
-// Detailansicht
-function showDetail(index) {
-  const product = products[index];
-  const modal = document.getElementById("productDetail");
-  modal.style.display = "flex";
+const productDetailModal = document.getElementById("productDetailModal");
+const modalCloseBtn = document.getElementById("modalCloseBtn");
+const modalTitle = document.getElementById("modalTitle");
+const modalImages = document.getElementById("modalImages");
+const modalDescription = document.getElementById("modalDescription");
+const modalPrice = document.getElementById("modalPrice");
+const modalCategory = document.getElementById("modalCategory");
+const modalBrand = document.getElementById("modalBrand");
+const addToCartBtn = document.getElementById("addToCartBtn");
 
-  document.getElementById("detailImages").innerHTML = product.images.map(img => `<img src="${img}">`).join("");
-  document.getElementById("detailTitle").innerText = product.title;
-  document.getElementById("detailBrand").innerText = "Marke: " + product.brand;
-  document.getElementById("detailDescription").innerText = product.description;
-  document.getElementById("detailCategory").innerText = "Kategorie: " + product.category;
-  document.getElementById("detailPrice").innerText = "Preis: " + product.price + " €";
+const loginToggle = document.getElementById("loginToggle");
+const loginModal = document.getElementById("loginModal");
+const loginCloseBtn = document.getElementById("loginCloseBtn");
+const loginTab = document.getElementById("loginTab");
+const registerTab = document.getElementById("registerTab");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const loginMessage = document.getElementById("loginMessage");
 
-  document.getElementById("paypal-button-container").innerHTML = "";
-  paypal.Buttons({
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units: [{
-          amount: { value: product.price }
-        }]
-      });
-    },
-    onApprove: (data, actions) => {
-      return actions.order.capture().then(details => {
-        alert("Danke für deinen Kauf, " + details.payer.name.given_name + "!");
-      });
-    }
-  }).render('#paypal-button-container');
-}
+let currentProduct = null;
 
-// Detail schließen
-function closeDetail() {
-  document.getElementById("productDetail").style.display = "none";
-}
-
-// Admin Login
-const ADMIN_USER = "Admin_XXX";
-const ADMIN_PASS_HASH = "b3b77c0ecedbe934f9b84c8883bfa0d12bb40a2cbd58582e2c597c7551ff36b6"; // 'ichbinderAdmin'
-
-async function hashString(str) {
-  const buffer = new TextEncoder().encode(str);
-  const hash = await crypto.subtle.digest("SHA-256", buffer);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function loginAdmin() {
-  const user = document.getElementById("adminUser").value;
-  const pass = document.getElementById("adminPass").value;
-  const hashed = await hashString(pass);
-
-  if (user === ADMIN_USER && hashed === ADMIN_PASS_HASH) {
-    alert("Willkommen Admin!");
-    toggleLogin();
-    document.getElementById("uploadSection").style.display = "block";
-  } else {
-    alert("Falsche Zugangsdaten!");
-  }
-}
-
-function toggleLogin() {
-  const modal = document.getElementById("loginModal");
-  modal.style.display = modal.style.display === "flex" ? "none" : "flex";
-}
-
-// Produkt-Upload
-function handleImageUpload(callback) {
-  const fileInput = document.getElementById("productImageFile");
-  const files = fileInput.files;
-  if (!files.length) return callback([]);
-
-  const reader = new FileReader();
-  reader.onload = e => callback([e.target.result]);
-  reader.readAsDataURL(files[0]);
-}
-
-function uploadProduct() {
-  const title = document.getElementById("productTitle").value;
-  const brand = document.getElementById("productBrand").value;
-  const description = document.getElementById("productDescription").value;
-  const category = document.getElementById("productCategory").value;
-  const price = document.getElementById("productPrice").value;
-  const imageUrl = document.getElementById("productImages").value.trim();
-
-  handleImageUpload((uploadedImages) => {
-    const allImages = imageUrl ? [imageUrl, ...uploadedImages] : uploadedImages;
-    if (title && brand && description && category && price && allImages.length > 0) {
-      products.push({ title, brand, description, category, price, images: allImages });
-      saveProducts();
-      renderAll();
-      alert("Produkt hinzugefügt!");
-    } else {
-      alert("Bitte alle Felder ausfüllen.");
-    }
-  });
-}
-
-// Suche
-function handleSearch() {
-  const term = document.getElementById("searchInput").value.toLowerCase();
-  renderProducts("recentlySearched", p =>
-    p.title.toLowerCase().includes(term) ||
-    p.description.toLowerCase().includes(term) ||
-    p.category.toLowerCase().includes(term) ||
-    p.brand.toLowerCase().includes(term)
-  );
-}
-
-// Navigation
-document.querySelectorAll(".navlink").forEach(link => {
-  link.onclick = () => {
-    const page = link.dataset.page;
-    document.querySelectorAll("main > section").forEach(sec => sec.style.display = "none");
-    document.getElementById(page).style.display = "block";
-    document.getElementById("sidebar").classList.add("hidden");
-  };
+// Sidebar öffnen/schließen
+sidebarToggle.addEventListener("click", () => {
+    sidebar.classList.add("sidebar-open");
 });
 
-document.getElementById("backFromDetail").onclick = closeDetail;
+sidebarClose.addEventListener("click", () => {
+    sidebar.classList.remove("sidebar-open");
+});
 
-// Alle Bereiche aktualisieren
-function renderAll() {
-  renderProducts("recentlySearched", () => true);
-  renderProducts("favorites", (_, i) => favorites.includes(i));
-  renderProducts("makeupCategory", p => p.category === "Make-Up");
+// Login Modal öffnen/schließen
+loginToggle.addEventListener("click", () => {
+    loginModal.classList.remove("hidden");
+    loginMessage.textContent = "";
+});
+
+loginCloseBtn.addEventListener("click", () => {
+    loginModal.classList.add("hidden");
+    loginMessage.textContent = "";
+});
+
+// Tabs Login/Registrierung wechseln
+loginTab.addEventListener("click", () => {
+    loginTab.classList.add("active-tab");
+    registerTab.classList.remove("active-tab");
+    loginForm.classList.add("active-form");
+    loginForm.classList.remove("hidden");
+    registerForm.classList.add("hidden");
+    loginMessage.textContent = "";
+});
+registerTab.addEventListener("click", () => {
+    registerTab.classList.add("active-tab");
+    loginTab.classList.remove("active-tab");
+    registerForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+    loginMessage.textContent = "";
+});
+
+// Produkte anzeigen
+function displayProducts(list) {
+    productsGrid.innerHTML = "";
+    if (list.length === 0) {
+        productsGrid.innerHTML = "<p>Keine Produkte gefunden.</p>";
+        return;
+    }
+    list.forEach((prod) => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-pressed", "false");
+
+        card.innerHTML = `
+            <img src="${prod.images[0]}" alt="${prod.title}" />
+            <div class="product-title">${prod.title}</div>
+            <div class="product-price">${prod.price.toFixed(2)} €</div>
+            <div class="product-category">${prod.category}</div>
+        `;
+        card.addEventListener("click", () => openProductDetail(prod.id));
+        card.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") openProductDetail(prod.id);
+        });
+        productsGrid.appendChild(card);
+    });
 }
 
-renderAll();
+// Produkt-Detail öffnen
+function openProductDetail(id) {
+    currentProduct = products.find((p) => p.id === id);
+    if (!currentProduct) return;
+
+    modalTitle.textContent = currentProduct.title;
+    modalImages.innerHTML = "";
+    currentProduct.images.forEach((img) => {
+        const imageEl = document.createElement("img");
+        imageEl.src = img;
+        imageEl.alt = currentProduct.title;
+        modalImages.appendChild(imageEl);
+    });
+    modalDescription.textContent = currentProduct.description;
+    modalPrice.textContent = currentProduct.price.toFixed(2);
+    modalCategory.textContent = currentProduct.category;
+    modalBrand.textContent = currentProduct.brand;
+    productDetailModal.classList.remove("hidden");
 }
+
+// Produkt-Detail schließen
+modalCloseBtn.addEventListener("click", () => {
+    productDetailModal.classList.add("hidden");
+});
+
+// Produkt in Warenkorb hinzufügen
+addToCartBtn.addEventListener("click", () => {
+    if (!currentProduct) return;
+
+    cart.push(currentProduct);
+    localStorage.setItem("holtCart", JSON.stringify(cart));
+    updateCartUI();
+    productDetailModal.classList.add("hidden");
+});
+
+// Warenkorb anzeigen
+function updateCartUI() {
+    cartList.innerHTML = "";
+    if (cart.length === 0) {
+        cartEmpty.style.display = "block";
+        checkoutBtn.disabled = true;
+        return;
+    } else {
+        cartEmpty.style.display = "none";
+        checkoutBtn.disabled = false;
+    }
+    const summary = {};
+    cart.forEach((item) => {
+        summary[item.id] = summary[item.id] ? summary[item.id] + 1 : 1;
+    });
+    for (const id in summary) {
+        const product = products.find((p) => p.id == id);
+        const li = document.createElement("li");
+        li.textContent = `${product.title} x${summary[id]}`;
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "✕";
+        removeBtn.style.background = "none";
+        removeBtn.style.border = "none";
+        removeBtn.style.cursor = "pointer";
+        removeBtn.style.color = "red";
+        removeBtn.addEventListener("click", () => {
+            removeFromCart(product.id);
+        });
+        li.appendChild(removeBtn);
+        cartList.appendChild(li);
+    }
+}
+
+// Artikel aus Warenkorb entfernen
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    localStorage.setItem("holtCart", JSON.stringify(cart));
+    updateCartUI();
+}
+// Suche
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.toLowerCase();
+    const results = products.filter((prod) => {
+        return (
+            prod.title.toLowerCase().includes(query) ||
+            prod.description.toLowerCase().includes(query) ||
+            prod.category.toLowerCase().includes(query) ||
+            prod.brand.toLowerCase().includes(query)
+        );
+    });
+    displayProducts(results);
+});
+
+// Checkout-Button
+checkoutBtn.addEventListener("click", () => {
+    if (cart.length === 0) return;
+    alert("Zahlung aktuell nur Demo – später PayPal-Integration.");
+    cart = [];
+    localStorage.removeItem("holtCart");
+    updateCartUI();
+});
+
+// Login
+loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    if (email === adminData.email && password === adminData.password) {
+        loggedInUser = { email, isAdmin: true };
+        loginMessage.style.color = "green";
+        loginMessage.textContent = "Erfolgreich als Admin angemeldet!";
+        setTimeout(() => loginModal.classList.add("hidden"), 1500);
+    } else {
+        loginMessage.textContent = "Falsche Zugangsdaten!";
+    }
+});
+
+// Registrierung
+registerForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
+    const confirm = document.getElementById("registerPasswordConfirm").value;
+
+    if (password !== confirm) {
+        loginMessage.textContent = "Passwörter stimmen nicht überein!";
+        return;
+    }
+
+    loginMessage.style.color = "green";
+    loginMessage.textContent = "Registrierung erfolgreich! Du kannst dich jetzt anmelden.";
+    setTimeout(() => {
+        loginTab.click();
+    }, 1500);
+});
+
+// Initialisierung
+displayProducts(products);
+updateCartUI();
